@@ -8,25 +8,42 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { API } from '@/services';
+import { useStore } from '@/store';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
+  const setUser = useStore((state) => state.setUser);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleSignIn = async () => {
-    const response = await signIn('credentials', {
-      email: email,
-      password: password,
-    });
+  const { toast } = useToast();
 
-    console.log(response);
+  const handleSignIn = async () => {
+    try {
+      const response = await API.post('/auth/login', {
+        email: email,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        setIsLoggedIn(true);
+        setUser(response.data.user);
+      }
+    } catch (e) {
+      toast({
+        variant: 'destructive',
+        description: 'Invalid email or password',
+        title: 'Login',
+      });
+    }
   };
 
   return (
@@ -75,7 +92,7 @@ export default function SignInForm() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button
-            onClick={handleSignIn}
+            onClick={() => handleSignIn()}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white"
           >
             Sign In

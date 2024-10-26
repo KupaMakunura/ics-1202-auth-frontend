@@ -1,9 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
@@ -12,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -19,15 +17,63 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { API } from '@/services';
+import { useStore } from '@/store';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function SignUpPage() {
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState('User');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
+  const setUser = useStore((state) => state.setUser);
+  const { toast } = useToast();
 
-  const handleSignUp = (event: React.FormEvent) => {
-    event.preventDefault();
-    // Here you would typically handle the sign-up logic
-    console.log('Sign up submitted');
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      toast({
+        variant: 'destructive',
+        description: 'Passwords do not match',
+        title: 'Register',
+      });
+      return;
+    }
+
+    try {
+      const response = await API.post('/auth/register', {
+        email: email,
+        password: password,
+        name: name,
+        role: role,
+      });
+
+      if (response.status === 201) {
+        const user = {
+          ...response.data.user,
+          accessToken: response.data.accessToken,
+        };
+
+        setUser(user);
+        setIsLoggedIn(true);
+
+        toast({
+          variant: 'default',
+          className: 'bg-green-500 text-white',
+          description: 'You have successfully registered',
+          title: 'Registration',
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        description: 'Unexpected error occurred',
+        title: 'Register',
+      });
+    }
   };
 
   return (
@@ -41,56 +87,73 @@ export default function SignUpPage() {
             Create an account to get started
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSignUp}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input id="confirmPassword" type="password" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
-              <Select onValueChange={setRole} defaultValue={role}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button
-              type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Input
+              id="email"
+              type="email"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Input
+              id="name"
+              type="text"
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Name"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Input
+              id="password"
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              required
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Select onValueChange={setRole}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="User">User</SelectItem>
+                <SelectItem value="Admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4">
+          <Button
+            onClick={() => handleSignUp()}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            Register
+          </Button>
+          <div className="text-sm text-center text-gray-500 dark:text-gray-400">
+            Already have an account?
+            <Link
+              href="/signin"
+              className="text-purple-600 hover:underline ml-1 dark:text-purple-400"
             >
-              Sign Up
-            </Button>
-            <div className="text-sm text-center text-gray-500 dark:text-gray-400">
-              Already have an account?
-              <Link
-                href="/signin"
-                className="text-purple-600 hover:underline ml-1 dark:text-purple-400"
-              >
-                Sign in
-              </Link>
-            </div>
-          </CardFooter>
-        </form>
+              Sign in
+            </Link>
+          </div>
+        </CardFooter>
       </Card>
     </div>
   );

@@ -1,5 +1,5 @@
 import { HeaderRenderer } from '@/components/header-renderer';
-import AuthProvider from '@/providers/AuthProvider';
+import { Toaster } from '@/components/ui/toaster';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -19,10 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <HeaderRenderer />
-          {children}
-        </AuthProvider>
+        <HeaderRenderer />
+        {children}
+        <Toaster />
       </body>
     </html>
   );

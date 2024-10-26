@@ -1,10 +1,10 @@
 'use client';
 import Header from './header';
 import SimpleHeader from './simple-header';
-import { useSession } from 'next-auth/react';
+import { useStore } from '@/store';
 
 export const HeaderRenderer = () => {
-  const { data: session } = useSession();
+  const isLoggedIn = useStore((state) => state.isLoggedIn);
 
-  return session ? <SimpleHeader /> : <Header />;
+  return isLoggedIn ? <SimpleHeader /> : <Header />;
 };

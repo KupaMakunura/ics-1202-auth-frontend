@@ -1,8 +1,16 @@
-'use client';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export default function Header() {
+interface SimpleHeaderProps {
+  user?: {
+    name: string;
+    avatar?: string;
+  };
+  onLogin?: () => void;
+}
+
+export default function SimpleHeader({ user, onLogin }: SimpleHeaderProps) {
   return (
     <header className="w-full py-4 px-6 bg-white dark:bg-gray-800 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -25,12 +33,14 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center space-x-4">
-          <Button variant="outline" className="hidden md:inline-flex">
-            <Link href={'/'}>Sign In</Link>
-          </Button>
-          <Button className="bg-purple-600 text-white hover:bg-purple-700">
-            <Link href={'/register'}>Register</Link>
-          </Button>
+          {user ? (
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+          ) : (
+            <Button onClick={onLogin}>Login</Button>
+          )}
         </div>
       </div>
     </header>

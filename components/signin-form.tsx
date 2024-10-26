@@ -1,22 +1,33 @@
 'use client';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+  const handleSignIn = async () => {
+    const response = await signIn('credentials', {
+      email: email,
+      password: password,
+    });
+
+    console.log(response);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -32,6 +43,7 @@ export default function SignInForm() {
               id="email"
               type="email"
               placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
@@ -41,6 +53,7 @@ export default function SignInForm() {
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 required
                 className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -61,17 +74,20 @@ export default function SignInForm() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+          <Button
+            onClick={handleSignIn}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+          >
             Sign In
           </Button>
           <div className="text-sm text-center text-gray-500 dark:text-gray-400">
             Don't have an account?
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="text-purple-600 hover:underline ml-1 dark:text-purple-400"
             >
-              Sign up
-            </a>
+              Register
+            </Link>
           </div>
         </CardFooter>
       </Card>

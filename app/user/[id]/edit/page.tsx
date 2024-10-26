@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
@@ -12,15 +10,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useStore } from '@/store';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function UserAccount() {
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    avatar: 'https://github.com/shadcn.png',
-  });
+  const isLoggedIn = useStore((state) => state.isLoggedIn);
+  const user = useStore((state) => state.user);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const router = useRouter();
+
+  if (!isLoggedIn) {
+    router.push('/');
+  }
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -35,12 +43,11 @@ export default function UserAccount() {
         <CardHeader>
           <div className="flex items-center space-x-4">
             <Avatar className="w-20 h-20">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-2xl font-bold">{user.name}</CardTitle>
-              <CardDescription>{user.email}</CardDescription>
+              <CardTitle className="text-2xl font-bold">{user?.name}</CardTitle>
+              <CardDescription>{user?.email}</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -51,8 +58,8 @@ export default function UserAccount() {
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
-                  value={user.name}
-                  onChange={(e) => setUser({ ...user, name: e.target.value })}
+                  value={user?.name}
+                  onChange={(e) => setName(e.target.value)}
                   disabled={!isEditing}
                 />
               </div>
@@ -61,8 +68,8 @@ export default function UserAccount() {
                 <Input
                   id="email"
                   type="email"
-                  value={user.email}
-                  onChange={(e) => setUser({ ...user, email: e.target.value })}
+                  value={user?.email}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={!isEditing}
                 />
               </div>

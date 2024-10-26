@@ -30,6 +30,7 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
+  const isLoggedIn = useStore((state) => state.isLoggedIn);
   const setUser = useStore((state) => state.setUser);
   const { toast } = useToast();
 
@@ -57,7 +58,10 @@ export default function SignUpPage() {
           accessToken: response.data.accessToken,
         };
 
-        setUser(user);
+        setUser({
+          ...response.data.user,
+          accessToken: response.data.accessToken,
+        });
         setIsLoggedIn(true);
 
         toast({

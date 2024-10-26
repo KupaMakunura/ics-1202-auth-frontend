@@ -11,15 +11,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, BookOpenIcon, MessageCircleIcon } from 'lucide-react';
+import { useStore } from '@/store';
+import { useRouter } from 'next/navigation';
 
 export default function UserPage() {
-  const [user] = useState({
-    name: 'Alice Johnson',
-    email: 'alice@example.com',
-    avatar: 'https://github.com/shadcn.png',
-    role: 'User',
-    joinDate: 'January 15, 2023',
-  });
+  const isLoggedIn = useStore((state) => state.isLoggedIn);
+  const user = useStore((state) => state.user);
+
+  const router = useRouter();
+
+  if (!isLoggedIn) {
+    router.push('/');
+  }
 
   const [recentActivities] = useState([
     { id: 1, type: 'login', date: 'Today at 9:30 AM' },
@@ -54,21 +57,17 @@ export default function UserPage() {
           <CardContent>
             <div className="flex items-center space-x-4">
               <Avatar className="w-20 h-20">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-2xl font-bold">{user.name}</h2>
-                <p className="text-gray-500 dark:text-gray-400">{user.email}</p>
+                <h2 className="text-2xl font-bold">{user?.name}</h2>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {user?.email}
+                </p>
                 <div className="mt-2">
-                  <Badge variant="secondary">{user.role}</Badge>
+                  <Badge variant="secondary">{user?.role}</Badge>
                 </div>
               </div>
-            </div>
-            <div className="mt-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Member since: {user.joinDate}
-              </p>
             </div>
           </CardContent>
         </Card>

@@ -21,6 +21,9 @@ export default function SignInForm() {
   const [password, setPassword] = useState('');
   const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
   const setUser = useStore((state) => state.setUser);
+  const user = useStore((state) => state.user);
+
+  console.log(user);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -35,7 +38,10 @@ export default function SignInForm() {
 
       if (response.status === 200) {
         setIsLoggedIn(true);
-        setUser(response.data.user);
+        setUser({
+          ...response.data.user,
+          accessToken: response.data.accessToken,
+        });
       }
     } catch (e) {
       toast({

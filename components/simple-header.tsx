@@ -1,16 +1,21 @@
+'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useStore } from '@/store';
+import { useRouter } from 'next/navigation';
 
-interface SimpleHeaderProps {
-  user?: {
-    name: string;
-    avatar?: string;
+export default function SimpleHeader() {
+  const user = useStore((state) => state.user);
+  const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    // redirect
+
+    router.push('/');
   };
-  onLogin?: () => void;
-}
-
-export default function SimpleHeader({ user, onLogin }: SimpleHeaderProps) {
   return (
     <header className="w-full py-4 px-6 bg-white dark:bg-gray-800 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -33,14 +38,18 @@ export default function SimpleHeader({ user, onLogin }: SimpleHeaderProps) {
         </Link>
 
         <div className="flex items-center space-x-4">
-          {user ? (
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-          ) : (
-            <Button onClick={onLogin}>Login</Button>
-          )}
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="h-10 w-10 rounded-full  text-lg items-center pb-1 bg-purple-600 text-white">
+              {user?.name.charAt(0)!}
+            </AvatarFallback>
+          </Avatar>
+
+          <Button
+            className="bg-red-600  hover:bg-purple-700 text-white"
+            onClick={() => handleLogout()}
+          >
+            Logout
+          </Button>
         </div>
       </div>
     </header>

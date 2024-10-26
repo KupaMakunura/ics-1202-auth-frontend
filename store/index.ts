@@ -12,7 +12,7 @@ interface User {
 }
 
 interface Store {
-  user: User | null;
+  user: User | undefined;
   setUser: (user: User) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
@@ -21,7 +21,7 @@ interface Store {
 export const useStore = create(
   persist<Store>(
     (set) => ({
-      user: null,
+      user: undefined,
       setUser: (user) => set({ user }),
       isLoggedIn: false,
       setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),

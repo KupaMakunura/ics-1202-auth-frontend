@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -27,6 +27,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { API } from '@/services';
+import { useStore } from '@/store';
+import { useRouter } from 'next/navigation';
 
 // Mock data for the chart
 const data = [
@@ -39,11 +42,25 @@ const data = [
 ];
 
 export default function AdminDashboard() {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'User' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Admin' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User' },
-  ]);
+  const [users, setUsers] = useState<any[]>();
+  const user = useStore((state) => state.user);
+  const isLoggedIn = useStore((state) => state.isLoggedIn);
+
+  const router = useRouter();
+
+  if (!isLoggedIn) {
+    router.push('/');
+  }
+  const fetchUsers = async () => {
+    const response = await API.get('users/');
+    setUsers(response.data.users as any);
+  };
+
+  console.log(user?.accessToken);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -88,7 +105,7 @@ export default function AdminDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user) => (
+                {users?.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>

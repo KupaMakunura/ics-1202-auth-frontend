@@ -2,16 +2,19 @@
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import UnauthorizedAccess from '@/components/unauthorized-access';
 import { useStore } from '@/store';
 import { BookOpenIcon, CalendarIcon, MessageCircleIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function UserPage() {
@@ -68,6 +71,11 @@ export default function UserPage() {
               </div>
             </div>
           </CardContent>
+          <CardFooter>
+            <Button className="bg-purple-500 hover:bg-purple-400 text-white">
+              <Link href={`/user/${user?.id}/edit`}>Edit Profile</Link>
+            </Button>
+          </CardFooter>
         </Card>
 
         <Card>

@@ -1,10 +1,13 @@
 'use client';
 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -19,6 +22,7 @@ import {
 import UnauthorizedAccess from '@/components/unauthorized-access';
 import { API } from '@/services';
 import { useStore } from '@/store';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
   Bar,
@@ -43,21 +47,33 @@ const data = [
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>();
+  const user = useStore((state) => state.user);
   const isLoggedIn = useStore((state) => state.isLoggedIn);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await API.get('users/', {
+            headers: {
+              Authorization: `Bearer ${user?.accessToken}`,
+            },
+          });
+          setUsers(response.data.users as any);
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      }
+    };
+
+    fetchUsers();
+  }, [user, isLoggedIn]);
 
   if (!isLoggedIn) {
     if (!isLoggedIn) {
       return <UnauthorizedAccess />;
     }
   }
-  const fetchUsers = async () => {
-    const response = await API.get('users/');
-    setUsers(response.data.users as any);
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -109,7 +125,7 @@ export default function AdminDashboard() {
                     <TableCell>{user.role}</TableCell>
                     <TableCell>
                       <Button variant="outline" size="sm">
-                        Edit
+                        <Link href={`/admin/${user.id}/edit`}>Edit</Link>
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -117,6 +133,33 @@ export default function AdminDashboard() {
               </TableBody>
             </Table>
           </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>User Profile</CardTitle>
+            <CardDescription>Your personal information</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center space-x-4">
+              <Avatar className="w-20 h-20">
+                <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <h2 className="text-2xl font-bold">{user?.name}</h2>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {user?.email}
+                </p>
+                <div className="mt-2">
+                  <Badge variant="secondary">{user?.role}</Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button className="bg-purple-500 hover:bg-purple-400 text-white">
+              <Link href={`/user/${user?.id}/edit`}>Edit Profile</Link>
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     </div>

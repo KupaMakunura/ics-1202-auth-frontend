@@ -45,6 +45,15 @@ export default function SignUpPage() {
       return;
     }
 
+    if (password.length < 8 || confirmPassword.length < 8) {
+      toast({
+        variant: 'destructive',
+        description: 'Passwords must be at least 8 characters long',
+        title: 'Register',
+      });
+      return;
+    }
+
     try {
       const response = await API.post('/auth/register', {
         email: email,

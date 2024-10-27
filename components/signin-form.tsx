@@ -42,7 +42,7 @@ export default function SignInForm() {
           accessToken: response.data.accessToken,
         });
 
-        if (response.data.user.role === 'admin') {
+        if (response.data.user.role === 'Admin') {
           router.push(`/admin/${response.data.user.id}/`);
         } else {
           router.push(`/user/${response.data.user.id}/`);

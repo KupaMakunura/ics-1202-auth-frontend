@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -8,11 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { CalendarIcon, BookOpenIcon, MessageCircleIcon } from 'lucide-react';
 import { useStore } from '@/store';
+import { BookOpenIcon, CalendarIcon, MessageCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function UserPage() {
   const isLoggedIn = useStore((state) => state.isLoggedIn);

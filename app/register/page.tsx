@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { API } from '@/services';
 import { useStore } from '@/store';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function SignUpPage() {
@@ -30,7 +31,7 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
-  const isLoggedIn = useStore((state) => state.isLoggedIn);
+  const router = useRouter();
   const setUser = useStore((state) => state.setUser);
   const { toast } = useToast();
 
@@ -53,11 +54,6 @@ export default function SignUpPage() {
       });
 
       if (response.status === 201) {
-        const user = {
-          ...response.data.user,
-          accessToken: response.data.accessToken,
-        };
-
         setUser({
           ...response.data.user,
           accessToken: response.data.accessToken,
@@ -70,6 +66,12 @@ export default function SignUpPage() {
           description: 'You have successfully registered',
           title: 'Registration',
         });
+
+        if (response.data.user.role === 'admin') {
+          router.push(`/admin/${response.data.user.id}/`);
+        } else {
+          router.push(`/user/${response.data.user.id}/`);
+        }
       }
     } catch (error) {
       toast({

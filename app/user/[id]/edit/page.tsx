@@ -26,10 +26,6 @@ export default function UserAccount() {
 
   const router = useRouter();
 
-  if (!isLoggedIn) {
-    router.push('/');
-  }
-
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     setIsEditing(false);

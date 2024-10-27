@@ -43,7 +43,6 @@ const data = [
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>();
-  const user = useStore((state) => state.user);
   const isLoggedIn = useStore((state) => state.isLoggedIn);
 
   const router = useRouter();
@@ -55,8 +54,6 @@ export default function AdminDashboard() {
     const response = await API.get('users/');
     setUsers(response.data.users as any);
   };
-
-  console.log(user?.accessToken);
 
   useEffect(() => {
     fetchUsers();

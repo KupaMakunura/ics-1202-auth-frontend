@@ -14,6 +14,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,9 +22,7 @@ export default function SignInForm() {
   const [password, setPassword] = useState('');
   const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
   const setUser = useStore((state) => state.setUser);
-  const user = useStore((state) => state.user);
-
-  console.log(user);
+  const router = useRouter();
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -42,6 +41,12 @@ export default function SignInForm() {
           ...response.data.user,
           accessToken: response.data.accessToken,
         });
+
+        if (response.data.user.role === 'admin') {
+          router.push(`/admin/${response.data.user.id}/`);
+        } else {
+          router.push(`/user/${response.data.user.id}/`);
+        }
       }
     } catch (e) {
       toast({

@@ -20,6 +20,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { API } from '@/services';
 import { useStore } from '@/store';
+import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -76,18 +77,30 @@ export default function SignUpPage() {
           title: 'Registration',
         });
 
-        if (response.data.user.role === 'admin') {
+        if (response.data.user.role === 'Admin') {
           router.push(`/admin/${response.data.user.id}/`);
         } else {
           router.push(`/user/${response.data.user.id}/`);
         }
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        description: 'Unexpected error occurred',
-        title: 'Register',
-      });
+      const e = error as AxiosError;
+
+      if (e.response?.status === 400) {
+        toast({
+          variant: 'destructive',
+          description: 'Invalid email or password',
+          title: 'Register',
+        });
+      }
+
+      if (e.response?.status === 409) {
+        toast({
+          variant: 'destructive',
+          description: 'User with this email already exists',
+          title: 'Register',
+        });
+      }
     }
   };
 
@@ -162,7 +175,7 @@ export default function SignUpPage() {
           <div className="text-sm text-center text-gray-500 dark:text-gray-400">
             Already have an account?
             <Link
-              href="/signin"
+              href="/"
               className="text-purple-600 hover:underline ml-1 dark:text-purple-400"
             >
               Sign in

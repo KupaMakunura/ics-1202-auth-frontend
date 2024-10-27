@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import UnauthorizedAccess from '@/components/unauthorized-access';
 import { useStore } from '@/store';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function UserAccount() {
@@ -24,7 +24,9 @@ export default function UserAccount() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const router = useRouter();
+  if (!isLoggedIn) {
+    return <UnauthorizedAccess />;
+  }
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();

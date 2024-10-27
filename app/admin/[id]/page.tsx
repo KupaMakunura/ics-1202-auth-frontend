@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -17,19 +16,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+import UnauthorizedAccess from '@/components/unauthorized-access';
 import { API } from '@/services';
 import { useStore } from '@/store';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 // Mock data for the chart
 const data = [
@@ -45,10 +45,10 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>();
   const isLoggedIn = useStore((state) => state.isLoggedIn);
 
-  const router = useRouter();
-
   if (!isLoggedIn) {
-    router.push('/');
+    if (!isLoggedIn) {
+      return <UnauthorizedAccess />;
+    }
   }
   const fetchUsers = async () => {
     const response = await API.get('users/');

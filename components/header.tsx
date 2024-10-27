@@ -1,5 +1,4 @@
 'use client';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function Header() {
@@ -23,15 +22,6 @@ export default function Header() {
             CrazyAuth
           </span>
         </Link>
-
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" className="hidden md:inline-flex">
-            <Link href={'/'}>Sign In</Link>
-          </Button>
-          <Button className="bg-purple-600 text-white hover:bg-purple-700">
-            <Link href={'/register'}>Register</Link>
-          </Button>
-        </div>
       </div>
     </header>
   );

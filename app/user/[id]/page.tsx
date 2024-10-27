@@ -9,19 +9,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import UnauthorizedAccess from '@/components/unauthorized-access';
 import { useStore } from '@/store';
 import { BookOpenIcon, CalendarIcon, MessageCircleIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function UserPage() {
   const isLoggedIn = useStore((state) => state.isLoggedIn);
   const user = useStore((state) => state.user);
 
-  const router = useRouter();
-
   if (!isLoggedIn) {
-    router.push('/');
+    return <UnauthorizedAccess />;
   }
 
   const [recentActivities] = useState([
